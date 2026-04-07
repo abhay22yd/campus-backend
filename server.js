@@ -1,10 +1,9 @@
 const path = require('path');
-// 1. Load .env using an absolute path to avoid "undefined" MONGO_URI errors
 require('dotenv').config({ path: path.join(__dirname, '.env') }); 
 
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
+const cors = require('cors'); // Only need this once
 
 // 2. Import Routes
 const complaintRoutes = require('./routes/complaintRoutes.js');
@@ -12,21 +11,25 @@ const authRoutes = require('./routes/authRoutes');
 
 const app = express(); 
 
-// 3. CORS Configuration (Allows any local port like 5173, 5174, 5176, etc.)
+// 3. UPDATED CORS Configuration
 app.use(cors({
-  origin: true, 
-  methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+  // Add BOTH your local port and your Vercel URL here
+  origin: [
+    'http://localhost:5173', 
+    'https://campus-frontend-two.vercel.app/' // <--- REPLACE THIS with your Vercel Link
+  ], 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
 
 // 4. Middleware
-app.use(express.json()); // Essential for reading req.body in Login/Register
+app.use(express.json()); 
 
 // 5. API Routes
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/auth', authRoutes);
 
-// Test Route to check if Server is alive
+// Test Route
 app.get('/test', (req, res) => res.json({ message: "Backend is online! ✅" }));
 
 // 6. Database Connection
@@ -40,13 +43,13 @@ if (!uri) {
     .catch((err) => console.log("FAILED: Database connection error! ❌", err));
 }
 
-// 7. Global Error Handler (This shows the REAL error in your terminal)
+// 7. Global Error Handler
 app.use((err, req, res, next) => {
   console.error("!!! SERVER ERROR:", err.stack);
   res.status(500).json({ message: "Internal Server Error", error: err.message });
 });
 
-// 8. Start Server
+// 8. Start Server (Render uses process.env.PORT automatically)
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
