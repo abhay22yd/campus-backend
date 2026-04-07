@@ -3,7 +3,7 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors'); // Only need this once
+const cors = require('cors'); // Declared once here
 
 // 2. Import Routes
 const complaintRoutes = require('./routes/complaintRoutes.js');
@@ -11,13 +11,9 @@ const authRoutes = require('./routes/authRoutes');
 
 const app = express(); 
 
-// 3. UPDATED CORS Configuration
-// In your backend server.js
-const cors = require('cors');
-
-// Replace your current app.use(cors(...)) with this:
+// 3. UPDATED CORS Configuration (Fixed duplicate declaration)
 app.use(cors({
-  origin: '*', 
+  origin: '*', // Allows any frontend (Vercel, Localhost, etc.)
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
@@ -49,7 +45,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Internal Server Error", error: err.message });
 });
 
-// 8. Start Server (Render uses process.env.PORT automatically)
+// 8. Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
