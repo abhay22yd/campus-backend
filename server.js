@@ -12,12 +12,12 @@ const authRoutes = require('./routes/authRoutes');
 const app = express(); 
 
 // 3. UPDATED CORS Configuration
+// In your backend server.js
+const cors = require('cors');
+
+// Replace your current app.use(cors(...)) with this:
 app.use(cors({
-  // Add BOTH your local port and your Vercel URL here
-  origin: [
-    'http://localhost:5173', 
-    'https://campus-frontend-two.vercel.app/' // <--- REPLACE THIS with your Vercel Link
-  ], 
+  origin: '*', 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
